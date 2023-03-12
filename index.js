@@ -34,7 +34,7 @@ document.querySelector(".js-Selector").value = "Europe/London";
 const event = new Event("change");
 document.querySelector(".js-Selector").dispatchEvent(event);
 
-window.Telegram.WebApp.MainButton.onClick(sendSelectedTimezone()).show()
+window.Telegram.WebApp.MainButton.onClick(sendSelectedTimezone).show()
 
 function sendSelectedTimezone() {
     const timezone = document.querySelector('.js-Selector').value;
