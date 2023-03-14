@@ -2,6 +2,9 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Timezone</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://momentjs.com/downloads/moment.js"></script>
     <script src="https://momentjs.com/downloads/moment-timezone-with-data-10-year-range.js"></script>
@@ -10,14 +13,14 @@
 
 <body>
     <div class="container">
-        <p>
-            <select class="js-Selector"></select>
-        </p>
-
-        <ul>
-            <li><strong>UTC time:</strong> <span class="js-TimeUtc"></span></li>
-            <li><strong>Local time:</strong> <span class="js-TimeLocal"></span></li>
-        </ul>
+        <h1 class="header">Selected Timezone:</h1>
+        <div class="timezone-selector">
+            <div class="selected-timezone"></div>
+            <div class="timezone-list">
+                <input type="text" placeholder="Search...">
+                <ul></ul>
+            </div>
+        </div>
     </div>
     <script src="index.js"></script>
 </body>

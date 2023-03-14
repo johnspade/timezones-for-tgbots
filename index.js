@@ -1,42 +1,61 @@
-const dateTimeUtc = moment.utc();
-document.querySelector(".js-TimeUtc").innerHTML = dateTimeUtc.format("ddd, DD MMM YYYY HH:mm:ss");
+var selectedTimezoneElement = document.querySelector('.selected-timezone');
+var timezoneListElement = document.querySelector('.timezone-list');
+var searchInput = timezoneListElement.querySelector('input');
+var timezoneUl = timezoneListElement.querySelector('ul');
+var guessedTimezone = moment.tz.guess();
+var userTimezone = guessedTimezone ? guessedTimezone : 'UTC'
+selectedTimezoneElement.innerText = userTimezone.replace(/_/g, ' ');
 
-const selectorOptions = moment.tz.names()
+var timezones = moment.tz.names()
     .reduce((memo, tz) => {
         memo.push({
             name: tz,
             offset: moment.tz(tz).utcOffset()
         });
-
         return memo;
     }, [])
     .sort((a, b) => {
         return a.offset - b.offset
     })
-    .reduce((memo, tz) => {
-        const timezone = tz.offset ? moment.tz(tz.name).format('Z') : '';
+timezones.forEach(timezone => {
+    var offset = timezone.offset ? moment.tz(timezone.name).format('Z') : '';
+    var li = document.createElement('li');
+    li.innerText = `(GMT${offset}) ${timezone.name.replace(/_/g, ' ')}`;
+    timezoneUl.appendChild(li);
 
-        return memo.concat(`<option value="${tz.name}">(GMT${timezone}) ${tz.name}</option>`);
-    }, "");
-
-document.querySelector(".js-Selector").innerHTML = selectorOptions;
-
-document.querySelector(".js-Selector").addEventListener("change", e => {
-    const timestamp = dateTimeUtc.unix();
-    const offset = moment.tz(e.target.value).utcOffset() * 60;
-    const dateTimeLocal = moment.unix(timestamp + offset).utc();
-
-    document.querySelector(".js-TimeLocal").innerHTML = dateTimeLocal.format("ddd, DD MMM YYYY HH:mm:ss");
+    li.addEventListener('click', () => {
+        selectedTimezoneElement.innerText = li.innerText;
+        timezoneListElement.classList.remove('show');
+    });
 });
 
-document.querySelector(".js-Selector").value = "Europe/London";
+selectedTimezoneElement.addEventListener('click', () => {
+    timezoneListElement.classList.toggle('show');
+    searchInput.value = '';
+    filterTimezones('');
+    searchInput.focus();
+});
 
-const event = new Event("change");
-document.querySelector(".js-Selector").dispatchEvent(event);
+searchInput.addEventListener('input', () => {
+    var searchTerm = searchInput.value.toLowerCase();
+    filterTimezones(searchTerm);
+});
+
+function filterTimezones(searchTerm) {
+    var liElements = timezoneUl.getElementsByTagName('li');
+    Array.from(liElements).forEach(li => {
+        var timezoneName = li.innerText.toLowerCase();
+        if (timezoneName.indexOf(searchTerm) > -1) {
+            li.style.display = 'block';
+        } else {
+            li.style.display = 'none';
+        }
+    });
+}
 
 window.Telegram.WebApp.MainButton.onClick(sendSelectedTimezone).show()
 
 function sendSelectedTimezone() {
-    const timezone = document.querySelector('.js-Selector').value;
+    const timezone = document.querySelector('.selected-timezone').value;
     window.Telegram.WebApp.sendData(JSON.stringify({ timezone: timezone }));
 }
