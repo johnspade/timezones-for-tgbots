@@ -56,7 +56,7 @@ function filterTimezones(searchTerm) {
 window.Telegram.WebApp.MainButton.onClick(sendSelectedTimezone).show()
 
 function sendSelectedTimezone() {
-    var timezone = document.querySelector('.selected-timezone').value.split(' ');
+    var timezone = document.querySelector('.selected-timezone').innerText.split(' ');
     var name = timezone[timezone.length - 1];
     window.Telegram.WebApp.sendData(JSON.stringify({ timezone: name }));
 }
